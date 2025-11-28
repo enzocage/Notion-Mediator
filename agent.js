@@ -45,6 +45,15 @@ async function processPrompt(userPrompt, mode = 'notion') {
         - If you need to use a tool, output JSON with "tool" and "args".
         - If you are done or just answering a question, output JSON with "response" and "tool": null.
         - IMPORTANT: If asked to write long content, generate the FULL content immediately in the 'args' of the write tool. Do not split it into multiple steps.
+        - You can use MARKDOWN formatting in your text arguments:
+          - Bold: **text**
+          - Italic: *text*
+          - Strikethrough: ~~text~~
+          - Underline: <u>text</u>
+          - Highlight: ==text==
+          - Color: [color:red]text[/color] (colors: red, blue, green, orange, purple, grey, black)
+          - Headings: # Heading
+          - Lists: - Item
         
         Format:
         {
