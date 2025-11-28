@@ -14,18 +14,20 @@ app.use(express.static('public'));
 app.get('/api/config', (req, res) => {
     res.json({
         pageId1: process.env.PAGE_ID_1,
-        pageId2: process.env.PAGE_ID_2
+        pageId2: process.env.PAGE_ID_2,
+        googleDocId1: process.env.GOOGLE_DOC_ID_1,
+        googleDocId2: process.env.GOOGLE_DOC_ID_2
     });
 });
 
 app.post('/api/chat', async (req, res) => {
-    const { prompt } = req.body;
+    const { prompt, mode } = req.body;
     if (!prompt) {
         return res.status(400).json({ error: 'Prompt is required' });
     }
 
     try {
-        const response = await processPrompt(prompt);
+        const response = await processPrompt(prompt, mode);
         res.json({ response });
     } catch (error) {
         console.error(error);

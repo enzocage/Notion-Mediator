@@ -13,12 +13,17 @@
     <div class="chat-container">
         <header>
             <h1>Notion Mediator</h1>
+            <div class="mode-switch">
+                <label><input type="radio" name="mode" value="notion" checked> Notion</label>
+                <label><input type="radio" name="mode" value="google"> Google Docs</label>
+            </div>
             <div id="page-buttons" class="page-buttons"></div>
         </header>
         <div id="chat-history" class="chat-history">
             <!-- Messages will appear here -->
             <div class="message agent-message">
-                Hello! I can help you read and write to your Notion pages. Try asking "Read page 1".
+                Hello! I can help you read and write to your Notion pages or Google Docs. Select a mode and try asking
+                "Read page 1".
             </div>
         </div>
         <div class="input-area">

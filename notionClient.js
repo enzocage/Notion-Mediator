@@ -19,10 +19,11 @@ async function getPageContent(pageAlias) {
             page_size: 50,
         });
 
-        // Simple extraction of text content
+        // Simple extraction of text content with Block IDs
         const textContent = response.results.map(block => {
             if (block.type === 'paragraph' && block.paragraph.rich_text.length > 0) {
-                return block.paragraph.rich_text.map(t => t.plain_text).join('');
+                const text = block.paragraph.rich_text.map(t => t.plain_text).join('');
+                return `[BLOCK_ID:${block.id}] ${text}`;
             }
             return ''; // Ignore other block types for simplicity in this demo
         }).filter(text => text.length > 0).join('\n');
@@ -59,4 +60,24 @@ async function appendToPage(pageAlias, text) {
     }
 }
 
-module.exports = { getPageContent, appendToPage };
+async function updateBlock(blockId, newText) {
+    // Convert Markdown to Notion Blocks (we only use the first block for update)
+    const blocks = markdownToBlocks(newText);
+    if (blocks.length === 0) throw new Error("No content to update.");
+
+    // We assume we are updating a paragraph for simplicity
+    const newBlock = blocks[0];
+
+    try {
+        await notion.blocks.update({
+            block_id: blockId,
+            paragraph: newBlock.paragraph // Assuming paragraph update
+        });
+        return "Successfully updated block.";
+    } catch (error) {
+        console.error("Error updating Notion block:", error);
+        throw error;
+    }
+}
+
+module.exports = { getPageContent, appendToPage, updateBlock };

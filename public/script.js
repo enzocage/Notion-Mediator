@@ -17,11 +17,13 @@ async function sendMessage() {
     addMessage(text, 'user');
     userInput.value = '';
 
+    const mode = document.querySelector('input[name="mode"]:checked').value;
+
     try {
         const response = await fetch('http://localhost:3000/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt: text })
+            body: JSON.stringify({ prompt: text, mode: mode })
         });
         const data = await response.json();
         addMessage(data.response, 'agent');
@@ -36,32 +38,45 @@ userInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
 });
 
+let appConfig = {};
+
 async function loadButtons() {
     try {
         const response = await fetch('/api/config');
-        const config = await response.json();
-        const container = document.getElementById('page-buttons');
-
-        if (config.pageId1) {
-            const btn1 = document.createElement('a');
-            btn1.href = `https://notion.so/${config.pageId1}`;
-            btn1.target = '_blank';
-            btn1.textContent = 'Page 1';
-            btn1.className = 'page-btn';
-            container.appendChild(btn1);
-        }
-
-        if (config.pageId2) {
-            const btn2 = document.createElement('a');
-            btn2.href = `https://notion.so/${config.pageId2}`;
-            btn2.target = '_blank';
-            btn2.textContent = 'Page 2';
-            btn2.className = 'page-btn';
-            container.appendChild(btn2);
-        }
+        appConfig = await response.json();
+        updateButtons();
     } catch (error) {
         console.error('Failed to load page buttons:', error);
     }
 }
+
+function updateButtons() {
+    const container = document.getElementById('page-buttons');
+    container.innerHTML = ''; // Clear existing buttons
+
+    const mode = document.querySelector('input[name="mode"]:checked').value;
+
+    if (mode === 'notion') {
+        if (appConfig.pageId1) createButton(container, 'Page 1', `https://notion.so/${appConfig.pageId1}`);
+        if (appConfig.pageId2) createButton(container, 'Page 2', `https://notion.so/${appConfig.pageId2}`);
+    } else {
+        if (appConfig.googleDocId1) createButton(container, 'Doc 1', `https://docs.google.com/document/d/${appConfig.googleDocId1}`);
+        if (appConfig.googleDocId2) createButton(container, 'Doc 2', `https://docs.google.com/document/d/${appConfig.googleDocId2}`);
+    }
+}
+
+function createButton(container, text, url) {
+    const btn = document.createElement('a');
+    btn.href = url;
+    btn.target = '_blank';
+    btn.textContent = text;
+    btn.className = 'page-btn';
+    container.appendChild(btn);
+}
+
+// Listen for mode changes
+document.querySelectorAll('input[name="mode"]').forEach(radio => {
+    radio.addEventListener('change', updateButtons);
+});
 
 loadButtons();
