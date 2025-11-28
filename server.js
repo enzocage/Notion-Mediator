@@ -11,6 +11,13 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
+app.get('/api/config', (req, res) => {
+    res.json({
+        pageId1: process.env.PAGE_ID_1,
+        pageId2: process.env.PAGE_ID_2
+    });
+});
+
 app.post('/api/chat', async (req, res) => {
     const { prompt } = req.body;
     if (!prompt) {

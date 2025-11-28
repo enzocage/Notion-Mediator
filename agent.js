@@ -91,7 +91,7 @@ async function processPrompt(userPrompt) {
 
     } catch (error) {
         console.error("Agent Error:", error);
-        return "Sorry, I encountered an error processing your request.";
+        return `Sorry, I encountered an error processing your request: ${error.message}`;
     }
 }
 
